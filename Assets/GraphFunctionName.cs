@@ -4,5 +4,5 @@ using UnityEngine;
 
 public enum GraphFunctionName
 {
-    SineFunction, Sine2DFunction, Sine, Sine2D, MultiSine, MultiSine2D, Ripple
+    SineFunction, Sine2DFunction, Sine, Sine2D, MultiSine, MultiSine2D, Ripple, Cylinder, Sphere, Torus
 }

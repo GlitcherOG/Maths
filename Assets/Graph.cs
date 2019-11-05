@@ -13,21 +13,16 @@ public class Graph : MonoBehaviour
     public delegate Vector3 GraphFunction(float u, float v, float t);
     static GraphFunction[] functions =
     {
-    SineFunction, Sine2DFunction, MultiSineFunction, MultiSine2DFunction, Ripple
+    SineFunction, Sine2DFunction, MultiSineFunction, MultiSine2DFunction, Ripple, Cylinder, Sphere, Torus
 };
     void Awake()
     {
         float step = 2f / resolution;
         Vector3 scale = Vector3.one * step;
-        Vector3 position;
-        position.z = 0f;
-        position.y = 0f;
         points = new Transform[resolution * resolution];
         for (int i = 0; i < points.Length; i++)
         {
             Transform point = Instantiate(pointPrefab);
-            position.x = (i + 0.5f) * step - 1f;
-            point.localPosition = position;
             point.localScale = scale;
             point.SetParent(transform, false);
             points[i] = point;
@@ -35,19 +30,21 @@ public class Graph : MonoBehaviour
     }
     void Update()
     {
+        float t = Time.time;
+        GraphFunction f = functions[(int)function];
         float step = 2f / resolution;
-        Vector3 scale = Vector3.one * step;
-        points = new Transform[resolution * resolution];
-        for (int i = 0; i < points.Length; i++)
+        for (int i = 0, z = 0; z < resolution; z++)
         {
-            Transform point = Instantiate(pointPrefab);
-            point.localScale = scale;
-            point.SetParent(transform, false);
-            points[i] = point;
+            float v = (z + 0.5f) * step - 1f;
+            for (int x = 0; x < resolution; x++, i++)
+            {
+                float u = (x + 0.5f) * step - 1f;
+                points[i].localPosition = f(u, v, t);
+            }
         }
     }
     const float pi = Mathf.PI;
-    static float SineFunction(float x, float z, float t)
+    static Vector3 SineFunction(float x, float z, float t)
     {
         Vector3 p;
         p.x = x;
@@ -55,7 +52,7 @@ public class Graph : MonoBehaviour
         p.z = z;
         return p;
     }
-    static float Sine2DFunction(float x, float z, float t)
+    static Vector3 Sine2DFunction(float x, float z, float t)
     {
         Vector3 p;
         p.x = x;
@@ -128,9 +125,5 @@ public class Graph : MonoBehaviour
         p.z = s * Mathf.Cos(pi * u);
         return p;
     }
-    public enum GraphFunctionName 
-    {
-    Sine,
-    MultiSine
-    }
+
 }
